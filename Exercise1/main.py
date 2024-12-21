@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.datasets import load_iris
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_validate, cross_val_predict, train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 
@@ -10,31 +10,47 @@ from Exercise1.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 
 
 def compare_soft_and_regular_decision_tree(x, y, max_depth=None, min_samples_leaf=1, min_samples_split=2,
-                                           random_state=None):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
+                                           alpha=0.1, n_samples=100, random_state=None):
+    """
+    Compare performance of a regular DecisionTreeClassifier and a SoftDecisionTreeClassifier.
+    This includes accuracy scores and predicted probabilities for train and test sets.
+    """
+    # Convert inputs to appropriate types
+    x = pd.DataFrame(x)
+    y = pd.Series(y)
 
-    # origin classifier to compare
-    clf = DecisionTreeClassifier(random_state=random_state, max_depth=max_depth, min_samples_leaf=min_samples_leaf,
-                                 min_samples_split=min_samples_split, )
-    predict_accuries(clf, x_test, x_train, y_test, y_train)
+    # Initialize classifiers
+    clf_regular = DecisionTreeClassifier(random_state=random_state, max_depth=max_depth,
+                                         min_samples_leaf=min_samples_leaf, min_samples_split=min_samples_split)
+    clf_soft = SoftDecisionTreeClassifier(alpha=alpha, n_samples=n_samples, random_state=random_state,
+                                          max_depth=max_depth, min_samples_leaf=min_samples_leaf,
+                                          min_samples_split=min_samples_split)
 
-    clf = SoftDecisionTreeClassifier(alpha=0.1, n_samples=10, random_state=random_state, max_depth=max_depth,
-                                     min_samples_leaf=min_samples_leaf,
-                                     min_samples_split=10)
-    predict_accuries(clf, x_test, x_train, y_test, y_train)
+    print('Regular DecisionTreeClassifier:')
+    evaluate_classifier(clf_regular, x, y)
+
+    print('\nSoftDecisionTreeClassifier:')
+    evaluate_classifier(clf_soft, x, y)
 
 
-def predict_accuries(clf, x_test, x_train, y_test, y_train):
-    clf.fit(x_train, y_train)
-    proba_train = clf.predict_proba(x_train)
-    y_pred_labels_train = np.argmax(proba_train, axis=1)
-    proba_test = clf.predict_proba(x_test)
-    y_pred_labels_test = np.argmax(proba_test, axis=1)
-    print('score on training: {score}'.format(score=accuracy_score(y_train, y_pred_labels_train)))
-    print('score on test: {score}'.format(score=accuracy_score(y_test, y_pred_labels_test)))
+def evaluate_classifier(clf, x, y):
+    """
+    Evaluate classifier using cross-validation and print accuracy scores and predicted probabilities.
+    """
+
+    cv_results = cross_validate(clf, x, y, cv=5, return_train_score=True)
+    print("Test Score (CV):", cv_results['test_score'].mean())
+    print("Train Score (CV):", cv_results['train_score'].mean())
+
+    preds_proba = cross_val_predict(clf, x, y, cv=5, method='predict_proba')
+    y_pred_labels = np.argmax(preds_proba, axis=1)
+
+    predict_proba_accuracy = accuracy_score(y, y_pred_labels)
+    print("Accuracy from predicted probabilities (all data):", predict_proba_accuracy)
 
 
 if __name__ == '__main__':
+    # 2 features, 150 samples
     data = load_iris()
     X, Y = data.data, data.target
     print("Iris Dataset:")
@@ -61,15 +77,6 @@ if __name__ == '__main__':
     compare_soft_and_regular_decision_tree(X, Y, 7, 5, 2)
     print("\n")
 
-    # 54 features, 1315 samples
-    data = pd.read_csv(
-        'C:\\Users\\shake\\PycharmProjects\\ML_exs\\Exercise1\\datasets\\covtype.csv')
-    X, Y = data.drop(columns=['Cover_Type']), data['Cover_Type']
-
-    print("Covtype Dataset\n")
-    compare_soft_and_regular_decision_tree(X, Y, 6, 1, 2)
-    print("\n")
-
     # 8 features, 768 samples
     data = pd.read_csv(
         'C:\\Users\\shake\\PycharmProjects\\ML_exs\\Exercise1\\datasets\\diabetes.csv')
@@ -77,4 +84,13 @@ if __name__ == '__main__':
 
     print("Diabetes Dataset\n")
     compare_soft_and_regular_decision_tree(X, Y, 6, 1, 2)
+    print("\n")
+
+    # 54 features, 1315 samples
+    data = pd.read_csv(
+        'C:\\Users\\shake\\PycharmProjects\\ML_exs\\Exercise1\\datasets\\covtype.csv')
+    X, Y = data.drop(columns=['Cover_Type']), data['Cover_Type']
+
+    print("Covtype Dataset\n")
+    compare_soft_and_regular_decision_tree(X, Y)
     print("\n")

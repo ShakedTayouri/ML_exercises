@@ -73,14 +73,12 @@ class SoftDecisionTreeClassifier(DecisionTreeClassifier):
                     else:
                         node = self.tree_.children_right[node]
                 else:
-                    # With probability (1-alpha), go right, and with alpha, go left
                     if np.random.rand() > self.alpha:
                         node = self.tree_.children_right[node]
                     else:
                         node = self.tree_.children_left[node]
 
             # Once a leaf node is reached, store the class probabilities from that leaf
-            class_probs = self.tree_.value[node].flatten()
-            prob[i] = class_probs / np.sum(class_probs)  # Normalize to get probabilities
+            prob[i] = self.tree_.value[node].flatten()
 
         return prob
