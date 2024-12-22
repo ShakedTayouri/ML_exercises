@@ -6,6 +6,8 @@ from sklearn.model_selection import cross_validate, cross_val_predict
 from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 
+from Exercise1.BestHyperParameters import print_best_decision_tree_classifier
+from Exercise1.SensitivityAnalysis import find_best_hyperparameters
 from Exercise1.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 
 
@@ -116,24 +118,23 @@ if __name__ == '__main__':
     X, Y = data.drop(columns=['price_range']), data['price_range']
 
     print("Mobile Price Dataset\n")
+    print_best_decision_tree_classifier(X, Y)
+    find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, max_depth=10, max_features='sqrt', min_samples_leaf=1,
-                                           min_samples_split=10)
+                                           min_samples_split=10, alpha=0.029, n_samples=200)
     print("\n")
 
     # 35 features, 2149 samples
     data = pd.read_csv(
         'C:\\Users\\shake\\PycharmProjects\\ML_exs\\Exercise1\\datasets\\alzheimers_disease_data.csv')
     X, Y = data.drop(columns=['Diagnosis', 'DoctorInCharge']), data['Diagnosis']
-    #
-    # label_encoder = LabelEncoder()
-    # X['Gender'] = label_encoder.fit_transform(X['Gender']) #DoctorInCharge
 
     print("alzheimers_disease Dataset\n")
-
-    # print_best_decision_tree_classifier(X, Y)
+    print_best_decision_tree_classifier(X, Y)
+    find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=10, max_features='sqrt',
                                            min_samples_leaf=1,
-                                           min_samples_split=10)
+                                           min_samples_split=10, alpha=0.005, n_samples=200)
     print("\n")
 
     # 15 features, 2392 samples
@@ -142,8 +143,10 @@ if __name__ == '__main__':
     X, Y = data.drop(columns=['GradeClass']), data['GradeClass']
 
     print("Student Performance Dataset\n")
+    print_best_decision_tree_classifier(X, Y)
+    find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, max_depth=20, max_features='log2', min_samples_leaf=1,
-                                           min_samples_split=20)
+                                           min_samples_split=20, alpha=0.16, n_samples=50)
     print("\n")
 
     # 13 features, 52444 samples
@@ -160,9 +163,11 @@ if __name__ == '__main__':
 
     print("mountains_vs_beaches_preferences Dataset\n")
 
+    print_best_decision_tree_classifier(X, Y)
+    find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='sqrt',
                                            min_samples_leaf=1,
-                                           min_samples_split=10)
+                                           min_samples_split=10, alpha=0.05, n_samples=100)
     print("\n")
 
     # 50 features, 103904 samples
@@ -178,8 +183,9 @@ if __name__ == '__main__':
     Y = label_encoder.fit_transform(Y)
 
     print("Airline Dataset\n")
-
-    compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='log2',
-                                           min_samples_leaf=1,
-                                           min_samples_split=20)
-    print("\n")
+    # print_best_decision_tree_classifier(X, Y)
+    # find_best_hyperparameters(X, Y)
+    # compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='log2',
+    #                                        min_samples_leaf=1,
+    #                                        min_samples_split=20, alpha=0.03, n_samples=100)
+    # print("\n")
