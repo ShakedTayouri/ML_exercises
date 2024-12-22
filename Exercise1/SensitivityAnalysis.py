@@ -1,82 +1,83 @@
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from sklearn.metrics import accuracy_score
-
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from Exercise1.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 
 
-def get_accuracy(X_train, Y_train, X_test, Y_test, alpha, n_samples):
-    clf = SoftDecisionTreeClassifier(alpha, n_samples)
-    clf = clf.fit(X_train, Y_train)
-
-    y_pred = clf.predict_proba(X_test)
-    y_pred_labels = np.argmax(y_pred, axis=1)
-
-    return accuracy_score(Y_test, y_pred_labels)
-
-
-def evaluate_hyperparameters(X_train, Y_train, X_test, Y_test, alphas, n_samples):
+def find_best_hyperparameters(X, Y):
     """
-    Evaluate the Soft Decision Tree for different combinations of `alpha` and `n_samples`
-    and return training and testing accuracies.
+    Function to find the best hyperparameters for Soft Decision Tree using cross-validation with grid search.
     """
-    train_accuracies = np.zeros((len(n_samples), len(alphas)))
-    test_accuracies = np.zeros((len(n_samples), len(alphas)))
+    # Define parameter grid for alpha and n_samples
+    param_grid = {
+        'alpha': np.logspace(-3, np.log10(0.9), 5),  # Testing alpha in log scale from 0.001 to 0.9
+        'n_samples': [10, 50, 100, 200, 500, 1000]  # Number of samples to test
+    }
 
-    for i, n_sample in enumerate(n_samples):
-        for j, alpha in enumerate(alphas):
-            # Get training accuracy
-            train_accuracy = get_accuracy(X_train, Y_train, X_train, Y_train, alpha, n_sample)
-            train_accuracies[i, j] = train_accuracy
+    # Initialize the Soft Decision Tree classifier
+    clf = SoftDecisionTreeClassifier(alpha=0.1, n_samples=100)
 
-            # Get testing accuracy
-            test_accuracy = get_accuracy(X_train, Y_train, X_test, Y_test, alpha, n_sample)
-            test_accuracies[i, j] = test_accuracy
+    # Setup Stratified K-Fold cross-validation for class imbalance handling
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
-    return train_accuracies, test_accuracies
+    # Grid search with cross-validation
+    grid_search = GridSearchCV(
+        estimator=clf,
+        param_grid=param_grid,
+        cv=skf,
+        scoring='accuracy',
+        n_jobs=-1,  # Parallelize the search across available cores
+        verbose=1
+    )
+
+    # Perform the grid search
+    grid_search.fit(X, Y)
+
+    # Get the best parameters and the best cross-validation score
+    best_params = grid_search.best_params_
+    best_score = grid_search.best_score_
+
+    print(f"Best Alpha: {best_params['alpha']}")
+    print(f"Best Number of Samples: {best_params['n_samples']}")
+    print(f"Best Cross-Validation Accuracy: {best_score:.4f}")
+
+    # Now let's visualize the results
+    mean_accuracies = grid_search.cv_results_['mean_test_score']
+    param_alpha = [params['alpha'] for params in grid_search.cv_results_['params']]
+    param_n_samples = [params['n_samples'] for params in grid_search.cv_results_['params']]
+
+    alpha_values, sample_values = np.meshgrid(
+        np.logspace(-3, np.log10(0.9), 5), [10, 50, 100, 200, 500, 1000]
+    )
+
+    mean_accuracies = np.array(mean_accuracies).reshape(alpha_values.shape)
+
+    # Plot accuracy surface
+    plot_accuracy_surface(alpha_values, sample_values, mean_accuracies)
+
+    return best_params, best_score
 
 
-def plot_accuracy_surface(alpha_values, sample_values, train_accuracy_values, test_accuracy_values):
+def plot_accuracy_surface(alpha_values, sample_values, mean_accuracies):
     """
-    Plots surface plots of accuracy over different hyperparameter values.
+    Plots surface plots of mean accuracy over different hyperparameter values.
     """
-    # Flatten for plotly
+    # Flatten the results for plotting
     mesh_data = {
         'alpha': alpha_values.flatten(),
         'n_samples': sample_values.flatten(),
-        'train_accuracy': train_accuracy_values.flatten(),
-        'test_accuracy': test_accuracy_values.flatten()
+        'mean_accuracy': mean_accuracies.flatten()
     }
 
     df = pd.DataFrame(mesh_data)
 
-    # Training Accuracy Plot
-    fig_train = px.scatter_3d(df, x='alpha', y='n_samples', z='train_accuracy',
-                              title='Training Soft Decision Tree Accuracy',
-                              labels={'alpha': 'Alpha (Regularization)', 'n_samples': 'Number of Samples',
-                                      'train_accuracy': 'Train Accuracy'},
-                              opacity=0.7)
+    # Create a 3D scatter plot of the hyperparameter space
+    fig = px.scatter_3d(df, x='alpha', y='n_samples', z='mean_accuracy',
+                        title='Mean Cross-Validation Accuracy for Soft Decision Tree',
+                        labels={'alpha': 'Alpha (Regularization)', 'n_samples': 'Number of Samples',
+                                'mean_accuracy': 'Mean Accuracy'},
+                        opacity=0.7)
 
-    # Testing Accuracy Plot
-    fig_test = px.scatter_3d(df, x='alpha', y='n_samples', z='test_accuracy',
-                             title='Testing Soft Decision Tree Accuracy',
-                             labels={'alpha': 'Alpha (Regularization)', 'n_samples': 'Number of Samples',
-                                     'test_accuracy': 'Test Accuracy'},
-                             opacity=0.7)
-
-    fig_train.show()
-    fig_test.show()
-
-
-def find_best_hyperparameters(X_train, X_test, Y_train, Y_test):
-    """
-    Function to find the best hyperparameters for Soft Decision Tree based on accuracy.
-    """
-    alphas = np.arange(0.1, 1.1, 0.1)
-    n_samples = [2, 10, 50, 100, 300, 700, 1000]
-
-    train_accuracies, test_accuracies = evaluate_hyperparameters(X_train, Y_train, X_test, Y_test, alphas, n_samples)
-
-    alpha_values, sample_values = np.meshgrid(alphas, n_samples)
-    plot_accuracy_surface(alpha_values, sample_values, train_accuracies, test_accuracies)
+    fig.update_traces(marker=dict(size=5))
+    fig.show()
