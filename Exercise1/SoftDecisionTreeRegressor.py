@@ -2,13 +2,18 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.utils.validation import check_is_fitted
 import numpy as np
 
+
 class SoftDecisionTreeRegressor(DecisionTreeRegressor):
-    def __init__(self, alpha, n_samples, **kwargs):
+    def __init__(self, alpha, n_samples, max_depth=None, min_samples_leaf=1, min_samples_split=2, random_state=None):
         """
         alpha: Probability of taking the opposite split at each node.
         n_samples: Number of times to average predictions during inference.
+        max_depth, min_samples_leaf, min_samples_split: Passed to the base DecisionTreeRegressor.
         """
-        super().__init__(**kwargs)
+        super().__init__(max_depth=max_depth,
+                         min_samples_leaf=min_samples_leaf,
+                         min_samples_split=min_samples_split,
+                         random_state=random_state)
         self.alpha = alpha
         self.n_samples = n_samples
 
