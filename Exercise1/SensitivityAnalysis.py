@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 from Exercise1.DecisionTrees.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 from Exercise1.DecisionTrees.SoftDecisionTreeRegressor import SoftDecisionTreeRegressor
-from Exercise1.WeightedDecisionTreeClassifier import WeightedDecisionTreeClassifier
+from Exercise1.DecisionTrees.WeightedDecisionTreeClassifier import WeightedDecisionTreeClassifier
 
 
 def get_soft_decision_tree_classifier_accuracy(X_train, Y_train, X_test, Y_test, alpha, n_samples):

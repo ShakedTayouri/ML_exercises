@@ -3,18 +3,16 @@ warnings.filterwarnings("ignore", message="X has feature names, but WeightedDeci
 
 import numpy as np
 import pandas as pd
-from sklearn.datasets import load_iris
 from sklearn.metrics import accuracy_score, auc, roc_curve
-from sklearn.model_selection import cross_validate, cross_val_predict, train_test_split, cross_val_score
+from sklearn.model_selection import cross_validate, cross_val_predict
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.preprocessing import LabelEncoder
 
 # Import the custom SoftDecisionTreeClassifier
 from BestHyperParameters import print_best_decision_tree_classifier
 from SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
-from WeightedDecisionTreeClassifier import WeightedDecisionTreeClassifier
+from Exercise1.DecisionTrees.WeightedDecisionTreeClassifier import WeightedDecisionTreeClassifier
 import matplotlib.pyplot as plt
-from SoftDistanceDecisionTreeClassifier import SoftDistanceDecisionTreeClassifier
+from Exercise1.DecisionTrees.SoftDistanceDecisionTreeClassifier import SoftDistanceDecisionTreeClassifier
 from SensitivityAnalysis import find_best_hyperparameters_for_soft_classifier
 
 
