@@ -7,8 +7,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeClassifier
 
 from Exercise1.BestHyperParameters import print_best_decision_tree_classifier
+from Exercise1.DecisionTrees.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 from Exercise1.SensitivityAnalysis import find_best_hyperparameters
-from Exercise1.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 
 
 def compare_soft_and_regular_decision_tree(x, y, criterion='gini', max_depth=None, min_samples_leaf=1,

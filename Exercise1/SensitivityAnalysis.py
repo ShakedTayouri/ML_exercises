@@ -1,10 +1,9 @@
 import numpy as np
 import plotly.graph_objects as go
-from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
-from Exercise1.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
+from Exercise1.DecisionTrees.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 
 
 def get_decision_tree_accuracy(X_train, Y_train, X_test, Y_test, alpha, n_samples):
