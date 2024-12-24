@@ -26,6 +26,10 @@ def compare_soft_and_regular_decision_tree(x, y, criterion='gini', max_depth=Non
     clf_regular = DecisionTreeClassifier(random_state=random_state, criterion=criterion, max_depth=max_depth,
                                          min_samples_leaf=min_samples_leaf, min_samples_split=min_samples_split,
                                          max_features=max_features)
+    basic_clf_soft = SoftDecisionTreeClassifier(alpha=0.1, n_samples=100, criterion=criterion,
+                                                random_state=random_state,
+                                                max_depth=max_depth, min_samples_leaf=min_samples_leaf,
+                                                min_samples_split=min_samples_split, max_features=max_features)
     clf_soft = SoftDecisionTreeClassifier(alpha=alpha, n_samples=n_samples, criterion=criterion,
                                           random_state=random_state,
                                           max_depth=max_depth, min_samples_leaf=min_samples_leaf,
@@ -33,6 +37,9 @@ def compare_soft_and_regular_decision_tree(x, y, criterion='gini', max_depth=Non
 
     print('Regular DecisionTreeClassifier:')
     evaluate_classifier(clf_regular, x, y)
+
+    print('\nBasic SoftDecisionTreeClassifier:')
+    evaluate_classifier(basic_clf_soft, x, y)
 
     print('\nSoftDecisionTreeClassifier:')
     evaluate_classifier(clf_soft, x, y)
@@ -121,7 +128,7 @@ if __name__ == '__main__':
     print_best_decision_tree_classifier(X, Y)
     find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, max_depth=10, max_features='sqrt', min_samples_leaf=1,
-                                           min_samples_split=10, alpha=0.029, n_samples=200)
+                                           min_samples_split=10, alpha=0.1, n_samples=50)
     print("\n")
 
     # 35 features, 2149 samples
@@ -130,11 +137,11 @@ if __name__ == '__main__':
     X, Y = data.drop(columns=['Diagnosis', 'DoctorInCharge']), data['Diagnosis']
 
     print("alzheimers_disease Dataset\n")
-    print_best_decision_tree_classifier(X, Y)
-    find_best_hyperparameters(X, Y)
+    # print_best_decision_tree_classifier(X, Y)
+    # find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=10, max_features='sqrt',
                                            min_samples_leaf=1,
-                                           min_samples_split=10, alpha=0.005, n_samples=200)
+                                           min_samples_split=10, alpha=0.06, n_samples=200)
     print("\n")
 
     # 15 features, 2392 samples
@@ -146,7 +153,7 @@ if __name__ == '__main__':
     print_best_decision_tree_classifier(X, Y)
     find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, max_depth=20, max_features='log2', min_samples_leaf=1,
-                                           min_samples_split=20, alpha=0.16, n_samples=50)
+                                           min_samples_split=20, alpha=0.03, n_samples=500)
     print("\n")
 
     # 13 features, 52444 samples
@@ -167,7 +174,7 @@ if __name__ == '__main__':
     find_best_hyperparameters(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='sqrt',
                                            min_samples_leaf=1,
-                                           min_samples_split=10, alpha=0.05, n_samples=100)
+                                           min_samples_split=10, alpha=0.02, n_samples=500)
     print("\n")
 
     # 50 features, 103904 samples
@@ -183,9 +190,8 @@ if __name__ == '__main__':
     Y = label_encoder.fit_transform(Y)
 
     print("Airline Dataset\n")
-    # print_best_decision_tree_classifier(X, Y)
-    # find_best_hyperparameters(X, Y)
-    # compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='log2',
-    #                                        min_samples_leaf=1,
-    #                                        min_samples_split=20, alpha=0.03, n_samples=100)
-    # print("\n")
+    print_best_decision_tree_classifier(X, Y)
+    find_best_hyperparameters(X, Y)
+    compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='log2',
+                                           min_samples_leaf=1,
+                                           min_samples_split=20, alpha=0.01, n_samples=10)
