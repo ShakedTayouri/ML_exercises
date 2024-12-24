@@ -4,48 +4,73 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 import warnings
 import pandas as pd
+from SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 
 
-
-class WeightedDecisionTreeClassifier(DecisionTreeClassifier):
-    def __init__(self, max_depth=None, min_samples_leaf=1, min_samples_split=2, random_state=None, ccp_alpha=0.0):
+class WeightedDecisionTreeClassifier(SoftDecisionTreeClassifier):
+    def __init__(self, criterion='gini', max_depth=None, min_samples_leaf=1, min_samples_split=2, random_state=None, max_features=None, alpha=0.1, n_samples=100):
         super().__init__(max_depth=max_depth, min_samples_leaf=min_samples_leaf,
-                         min_samples_split=min_samples_split, random_state=random_state, ccp_alpha=ccp_alpha)
+                         min_samples_split=min_samples_split, random_state=random_state, criterion=criterion, max_features=max_features, alpha=alpha, n_samples=n_samples)
         self.weights_ = None
-
+    
     def fit(self, X, y):
-        X = np.array(X, dtype=np.float32)  # Ensure X is float32
+        X = np.array(X, dtype=np.float32)
         super().fit(X, y)
 
+        # Initialize weights and selection counters for each leaf
         self.weights_ = []
+        self.selection_counts_ = []  
+        
         for i in range(self.tree_.node_count):
             if self.tree_.children_left[i] == -1:  # Leaf node
                 leaf_y = y[self.tree_.apply(X) == i]
-                class_counts = np.bincount(leaf_y)
-                majority_class = np.argmax(class_counts)
+                
+                # Class distribution and Gini impurity
+                class_counts = np.bincount(leaf_y, minlength=len(self.classes_))
+                probs = class_counts / np.sum(class_counts)
                 gini = self.gini_impurity(leaf_y)
-
-                # Confidence-based flipping
-                if len(class_counts) > 1 and class_counts[majority_class] / np.sum(class_counts) < 0.7 and gini > 0.55:
-                    flipped_class = np.random.choice(np.unique(leaf_y))
-                    self.weights_.append((flipped_class, gini))
-                else:
-                    self.weights_.append((majority_class, gini))
+                
+                # Initialize selection counter (all start at 0)
+                self.selection_counts_.append(np.zeros_like(probs))
+                
+                # Store proportions and Gini for use during prediction
+                self.weights_.append((probs, class_counts, gini))
             else:
                 self.weights_.append(None)
+                self.selection_counts_.append(None)
         return self
 
+
     def predict(self, X):
-        # Consistently handle DataFrame inputs during prediction
         if isinstance(X, pd.DataFrame):
             X = X.values
 
         X = np.array(X, dtype=np.float32)
         leaf_indices = self.tree_.apply(X)
 
-        # Generate predictions based on the leaf weights
-        predictions = np.array([self.weights_[idx][0] for idx in leaf_indices])
-        return predictions
+        predictions = []
+        for idx in leaf_indices:
+            if self.weights_[idx] is not None:
+                probs, _, gini = self.weights_[idx]
+                counts = self.selection_counts_[idx]
+
+                if gini < 0.7:  # Low impurity, predict majority class directly
+                    chosen_class = np.argmax(probs)
+                else:
+                    # High impurity, rotate through classes based on selection counts
+                    adjusted_probs = probs / (counts + 1)
+                    chosen_class = np.argmax(adjusted_probs)
+                    
+                    # Update selection count for the chosen class
+                    self.selection_counts_[idx][chosen_class] += 1
+
+                predictions.append(chosen_class)
+            else:
+                predictions.append(0)
+        
+        return np.array(predictions)
+
+
 
     def score(self, X, y):
         # Compute accuracy based on predictions

@@ -14,7 +14,7 @@ from scipy import stats
 from sklearn.feature_selection import SelectKBest, f_regression
 
 
-path_to_datasets = r"C:\Users\Noa\Documents\Studies\ML_exercises\Exercise1\datasets\for_regression"
+path_to_datasets = r"C:\Users\Noa\Documents\Studies\ML_exercises\Exercise1\datasets\regression"
 
 
 
@@ -188,13 +188,13 @@ if __name__ == '__main__':
 
     # results = pd.DataFrame(grid_search.cv_results_)
 
-    # # 6 - Adult Income Dataset - V
-    # data = pd.read_csv(f'{path_to_datasets}\\AdultIncome_dataset_encoding.csv')
-    # data.columns = data.columns.str.strip()
-    # X, y = data.drop(columns=['income']), data['income']
-    # print("Adult Income Dataset:")
-    # compare_soft_and_regular_regression(X, y, max_depth=10, min_samples_leaf=5, min_samples_split=4, alpha=0.01)
-    # print("\n")
+    # 6 - Adult Income Dataset - V
+    data = pd.read_csv(f'{path_to_datasets}\\AdultIncome_dataset_encoding.csv')
+    data.columns = data.columns.str.strip()
+    X, y = data.drop(columns=['income']), data['income']
+    print("Adult Income Dataset:")
+    compare_soft_and_regular_regression(X, y, max_depth=10, min_samples_leaf=5, min_samples_split=4, alpha=0.01)
+    print("\n")
 
     # # Define parameter ranges for tuning
     # max_depth_range = [10, 12]
@@ -235,10 +235,10 @@ if __name__ == '__main__':
     # best_model, best_params, grid_search = tune_soft_decision_tree(X, y, max_depth_range, alpha_range, n_samples_range)
 
 
-    # 9 - Parkinson's Telemonitoring Dataset - ?
-    data = pd.read_csv(f'{path_to_datasets}\\ParkinsonsTelemonitoring_dataset.csv', delimiter=',')
-    data.columns = data.columns.str.strip()
-    X, y = data.drop(columns=['motor_UPDRS', 'subject#', 'test_time', 'sex', 'total_UPDRS']), data['motor_UPDRS']
-    print("Parkinson's Telemonitoring Dataset:")
-    compare_soft_and_regular_regression(X, y, max_depth=7, min_samples_leaf=10, min_samples_split=50, alpha=0.05, n_samples=400)
-    print("\n")
+    # # 9 - Parkinson's Telemonitoring Dataset - ?
+    # data = pd.read_csv(f'{path_to_datasets}\\ParkinsonsTelemonitoring_dataset.csv', delimiter=',')
+    # data.columns = data.columns.str.strip()
+    # X, y = data.drop(columns=['motor_UPDRS', 'subject#', 'test_time', 'sex', 'total_UPDRS']), data['motor_UPDRS']
+    # print("Parkinson's Telemonitoring Dataset:")
+    # compare_soft_and_regular_regression(X, y, max_depth=7, min_samples_leaf=10, min_samples_split=50, alpha=0.05, n_samples=400)
+    # print("\n")
