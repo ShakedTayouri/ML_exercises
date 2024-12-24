@@ -12,7 +12,7 @@ y = data.target
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 # Initialize and fit the model
-clf = WeightedDecisionTreeClassifier(max_depth=5, min_samples_leaf=3)
+clf = WeightedDecisionTreeClassifier(criterion='gini', max_depth=5, min_samples_leaf=3)
 clf.fit(X_train, y_train)
 
 # Make predictions
