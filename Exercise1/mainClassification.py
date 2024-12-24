@@ -8,7 +8,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 from Exercise1.BestHyperParameters import print_best_decision_tree_classifier
 from Exercise1.DecisionTrees.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
-from Exercise1.SensitivityAnalysis import find_best_hyperparameters
+from Exercise1.SensitivityAnalysis import find_best_hyperparameters_for_soft_classifier
 
 
 def compare_soft_and_regular_decision_tree(x, y, criterion='gini', max_depth=None, min_samples_leaf=1,
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     print("Mobile Price Dataset\n")
     print_best_decision_tree_classifier(X, Y)
-    find_best_hyperparameters(X, Y)
+    find_best_hyperparameters_for_soft_classifier(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, max_depth=10, max_features='sqrt', min_samples_leaf=1,
                                            min_samples_split=10, alpha=0.1, n_samples=50)
     print("\n")
@@ -151,7 +151,7 @@ if __name__ == '__main__':
 
     print("Student Performance Dataset\n")
     print_best_decision_tree_classifier(X, Y)
-    find_best_hyperparameters(X, Y)
+    find_best_hyperparameters_for_soft_classifier(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, max_depth=20, max_features='log2', min_samples_leaf=1,
                                            min_samples_split=20, alpha=0.03, n_samples=500)
     print("\n")
@@ -171,7 +171,7 @@ if __name__ == '__main__':
     print("mountains_vs_beaches_preferences Dataset\n")
 
     print_best_decision_tree_classifier(X, Y)
-    find_best_hyperparameters(X, Y)
+    find_best_hyperparameters_for_soft_classifier(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='sqrt',
                                            min_samples_leaf=1,
                                            min_samples_split=10, alpha=0.02, n_samples=500)
@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
     print("Airline Dataset\n")
     print_best_decision_tree_classifier(X, Y)
-    find_best_hyperparameters(X, Y)
+    find_best_hyperparameters_for_soft_classifier(X, Y)
     compare_soft_and_regular_decision_tree(X, Y, criterion='entropy', max_depth=20, max_features='log2',
                                            min_samples_leaf=1,
                                            min_samples_split=20, alpha=0.01, n_samples=10)
