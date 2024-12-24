@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import LabelEncoder
 
 # Import the custom SoftDecisionTreeClassifier
-from SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
+from Exercise1.SoftDecisionTreeClassifier import SoftDecisionTreeClassifier
 from WeightedDecisionTreeClassifier import WeightedDecisionTreeClassifier
 
 
