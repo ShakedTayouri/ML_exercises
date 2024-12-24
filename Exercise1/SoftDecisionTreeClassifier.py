@@ -19,7 +19,6 @@ class SoftDecisionTreeClassifier(DecisionTreeClassifier):
         """
         Override the predict_proba function to implement soft splits.
         """
-        print("Enter predict_proba function")
         # Checks that the model has been fitted
         check_is_fitted(self)
         # Checks that X is in the correct format for making predictions
