@@ -1,3 +1,5 @@
+GitHub link - https://github.com/ShakedTayouri/ML_exercises/tree/main/Exercise4
+
 # **CNN for Flower Classification**
 
 This repository presents the implementation and results of using Convolutional Neural Networks (CNNs) for flower classification using transfer learning.
@@ -19,9 +21,9 @@ This repository presents the implementation and results of using Convolutional N
 
 ## **References**
 
-1. **YOLO Documentation **
+1. YOLO Documentation:
    - [Website Link](https://github.com/ultralytics/yolov5)
 
-2. **Oxford 102 Flower Dataset **:
+2. Oxford 102 Flower Dataset:
    - Nilsback and Zisserman, 2008
    - [Website Link](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/)
